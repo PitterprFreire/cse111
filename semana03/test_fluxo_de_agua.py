@@ -1,4 +1,4 @@
-from fluxo_de_agua import calc_altura_coluna_agua, calc_pressao_pela_altura, calc_perda_pressao_tubo, calc_perda_pressao_conexoes, calc_num_reynolds, calc_perda_pressao_reducao_tubo
+from fluxo_de_agua import calc_altura_coluna_agua, calc_pressao_pela_altura, calc_perda_pressao_tubo, calc_perda_pressao_conexoes, calc_num_reynolds, calc_perda_pressao_reducao_tubo, calc_conversao_KPa_para_MCA
 from pytest import approx
 import pytest
 
@@ -26,14 +26,30 @@ def test_calc_perda_pressao_tubo():
 
 def test_calc_perda_pressao_conexoes():
 
-    pass
+    assert calc_perda_pressao_conexoes(0.00, 3) == approx(0.000, abs=0.001)
+    assert calc_perda_pressao_conexoes(1.65, 0) == approx(0.000, abs=0.001)
+    assert calc_perda_pressao_conexoes(1.65, 2) == approx(-0.109, abs=0.001)
+    assert calc_perda_pressao_conexoes(1.75, 2) == approx(-0.122, abs=0.001)
+    assert calc_perda_pressao_conexoes(1.75, 5) == approx(-0.306, abs=0.001)
 
 def test_calc_num_reynolds():
 
-    pass
+    assert calc_num_reynolds(0.048692, 0.00) == approx(0, abs=1)
+    assert calc_num_reynolds(0.048692, 1.65) == approx(80069, abs=1)
+    assert calc_num_reynolds(0.048692, 1.75) == approx(84922, abs=1)
+    assert calc_num_reynolds(0.286870, 1.65) == approx(471729, abs=1)
+    assert calc_num_reynolds(0.286870, 1.75) == approx(500318, abs=1)
 
 def test_calc_perda_pressao_reducao_tubo():
 
-    pass
+    assert calc_perda_pressao_reducao_tubo(0.28687, 0.00, 1, 0.048692) == approx(0.000, abs=0.001)
+    assert calc_perda_pressao_reducao_tubo(0.28687, 1.65, 471729, 0.048692) == approx(-163.744, abs=0.001)
+    assert calc_perda_pressao_reducao_tubo(0.28687, 1.75, 500318, 0.048692) == approx(-184.182, abs=0.001)
+
+def test_calc_conversao_KPa_para_MCA():
+
+    assert calc_conversao_KPa_para_MCA(0.000) == approx(0.000, abs=0.0001)
+    assert calc_conversao_KPa_para_MCA(-163.744) == approx(-16.727, abs=0.0001)
+    assert calc_conversao_KPa_para_MCA(-184.182) == approx(-18.815, abs=0.0001)
 
 pytest.main(["-v", "--tb=line", "-rN", __file__])
